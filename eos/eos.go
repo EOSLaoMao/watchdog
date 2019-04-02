@@ -5,7 +5,11 @@ import (
 	"net/http"
 )
 
-const bpName string = "eoslaomaocom"
+const (
+	BlockProduceTime = 12 * 0.5
+	bpCount          = 21
+	bpName           = "eoslaomaocom"
+)
 
 func WatchBlocks() {
 	go func() {
@@ -22,6 +26,7 @@ func WatchBlocks() {
 func serveBlocks() {
 	http.HandleFunc("/block/status", func(w http.ResponseWriter, r *http.Request) {
 		if s.Err != nil {
+			w.WriteHeader(500)
 			w.Write([]byte(s.Err.Error()))
 		} else {
 			w.Write(

@@ -33,7 +33,7 @@ func (bs *blockStatus) statusError(err error) {
 
 func logBlocks() {
 	// 12*0.5*21
-	ticker := time.NewTicker(12 * 0.5 * time.Second)
+	ticker := time.NewTicker(BlockProduceTime * time.Second)
 	for range ticker.C {
 		blocks, err := unpaidBlocks(bpName)
 		if err != nil {
@@ -51,7 +51,7 @@ func logBlocks() {
 }
 
 func checkBlocks() {
-	ticker := time.NewTicker(12 * 0.5 * 21 * time.Second)
+	ticker := time.NewTicker(BlockProduceTime * bpCount * time.Second)
 	for range ticker.C {
 		if len(b.Blocks) == 0 {
 			continue
