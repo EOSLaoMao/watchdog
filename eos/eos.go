@@ -7,7 +7,7 @@ import (
 
 const bpName string = "eoslaomaocom"
 
-func MonitorBlocks() {
+func WatchBlocks() {
 	go func() {
 		go logBlocks()
 		go checkBlocks()
@@ -34,6 +34,4 @@ func serveBlocks() {
 			)
 		}
 	})
-
-	http.ListenAndServe(":8080", nil)
 }
