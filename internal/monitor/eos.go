@@ -15,15 +15,17 @@ var monitorList = map[string]string{
 }
 
 func StartMonitor() {
-	ticker := time.NewTicker(3 * time.Minute)
+	ticker := time.NewTicker(3 * time.Second)
 	for range ticker.C {
 
 		for k, v := range monitorList {
-			res, err := http.Get(fmt.Sprintf("http://127.0.0.1%s", v))
+
+			res, err := http.Get(fmt.Sprintf("http://127.0.0.1:8080%s", v))
 			if err != nil {
-				// monitor down
-				message.SendToTelegram(fmt.Sprintf("Monitor for %s maybe unavailable", k))
-				continue
+				message.SendToTelegram(
+					fmt.Sprintf("Monitor for %s maybe unavailable: %s", k, err.Error()),
+				)
+				break
 			}
 			defer res.Body.Close()
 
@@ -33,7 +35,7 @@ func StartMonitor() {
 			switch res.StatusCode {
 			case 200:
 				message.SendToTelegram(msg)
-			case 500:
+			case 502:
 				message.SendToTelegram(msg)
 			}
 		}

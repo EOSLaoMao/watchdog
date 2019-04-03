@@ -30,7 +30,7 @@ func Listen() {
 				),
 			)
 		case StatusDown:
-			w.WriteHeader(500)
+			w.WriteHeader(502)
 			w.Write([]byte(bs.Status))
 		}
 	})
