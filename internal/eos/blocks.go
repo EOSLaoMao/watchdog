@@ -12,7 +12,7 @@ import (
 type Status string
 
 const (
-	StatusPrepare Status = "EOS monitor is't not ready yet"
+	StatusPrepare Status = "Prepare"
 	StatusOK      Status = "OK"
 	StatusDown    Status = "Service maybe unavailable"
 )

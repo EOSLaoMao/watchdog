@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/EOSLaoMao/watchdog/internal/eos"
@@ -19,8 +20,8 @@ func StartMonitor() {
 	for range ticker.C {
 
 		for k, v := range monitorList {
-
-			res, err := http.Get(fmt.Sprintf("http://127.0.0.1:8080%s", v))
+			host := os.Getenv("MONITOR_SERVER")
+			res, err := http.Get(fmt.Sprintf("http://%s:8080%s", host, v))
 			if err != nil {
 				message.SendToTelegram(
 					fmt.Sprintf("Monitor for %s maybe unavailable: %s", k, err.Error()),

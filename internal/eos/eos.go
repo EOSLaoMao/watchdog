@@ -18,7 +18,7 @@ func Listen() {
 		switch bs.Status {
 		case StatusPrepare:
 			w.WriteHeader(200)
-			w.Write([]byte(bs.Status))
+			w.Write([]byte(fmt.Sprintf("preparing EOS monitor %v", time.Now())))
 		case StatusOK:
 			w.WriteHeader(200)
 			w.Write(
