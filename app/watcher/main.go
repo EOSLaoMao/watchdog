@@ -1,7 +1,7 @@
 package main
 
-import "github.com/EOSLaoMao/watchdog/monitor"
+import "github.com/EOSLaoMao/watchdog/internal/monitor"
 
 func main() {
-	monitor.Monitor()
+	monitor.StartMonitor()
 }
