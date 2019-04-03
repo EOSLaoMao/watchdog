@@ -36,6 +36,7 @@ func CheckUnpaidBlocks() {
 		for range ticker.C {
 			blocks, err := getUnpaidBlocks(bpName)
 			if err != nil {
+				fmt.Println("get unpaid blocks error: ", err.Error())
 				bs.Status = StatusDown
 				continue
 			}
@@ -65,7 +66,7 @@ func CheckUnpaidBlocks() {
 
 func getUnpaidBlocks(owner string) (uint, error) {
 	cli := http.Client{
-		Timeout: time.Duration(1 * time.Second),
+		Timeout: time.Duration(5 * time.Second),
 	}
 
 	params := map[string]interface{}{

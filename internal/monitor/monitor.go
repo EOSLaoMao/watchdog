@@ -16,7 +16,7 @@ var monitorList = map[string]string{
 }
 
 func StartMonitor() {
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(3 * time.Minute)
 	for range ticker.C {
 
 		for k, v := range monitorList {
