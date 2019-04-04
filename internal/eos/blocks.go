@@ -9,24 +9,24 @@ import (
 	"time"
 )
 
-type Status string
+type BlockStatus string
 
 const (
-	StatusPrepare Status = "Prepare"
-	StatusOK      Status = "OK"
-	StatusDown    Status = "Service maybe unavailable"
+	BlockStatusPrepare BlockStatus = "Prepare"
+	BlockStatusOK      BlockStatus = "OK"
+	BlockStatusDown    BlockStatus = "Service maybe unavailable"
 )
 
 const blocksURL string = "https://api.eoslaomao.com/v1/chain/get_table_rows"
 
-type BlockStatus struct {
+type BlockStat struct {
 	UnpaidBlocks uint
-	Status       Status
+	Status       BlockStatus
 }
 
 var c = make(chan uint)
-var bs = &BlockStatus{
-	Status: StatusPrepare,
+var bs = &BlockStat{
+	Status: BlockStatusPrepare,
 }
 
 func CheckUnpaidBlocks() {
@@ -37,7 +37,7 @@ func CheckUnpaidBlocks() {
 			blocks, err := getUnpaidBlocks(bpName)
 			if err != nil {
 				fmt.Println("get unpaid blocks error: ", err.Error())
-				bs.Status = StatusDown
+				bs.Status = BlockStatusDown
 				continue
 			}
 
@@ -52,10 +52,10 @@ func CheckUnpaidBlocks() {
 			case blocks-bs.UnpaidBlocks >= 12:
 				fallthrough
 			case blocks-bs.UnpaidBlocks < 0:
-				bs.Status = StatusOK
+				bs.Status = BlockStatusOK
 				break
 			default:
-				bs.Status = StatusDown
+				bs.Status = BlockStatusDown
 				break
 			}
 

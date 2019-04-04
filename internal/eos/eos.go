@@ -8,18 +8,18 @@ import (
 
 const (
 	BlockProduceTime = 12 * 0.5
-	ListenPath       = "/eos/block/status"
+	ListenBlockPath  = "/eos/block/status"
 	bpCount          = 21
 	bpName           = "eoslaomaocom"
 )
 
 func Listen() {
-	http.HandleFunc(ListenPath, func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(ListenBlockPath, func(w http.ResponseWriter, r *http.Request) {
 		switch bs.Status {
-		case StatusPrepare:
+		case BlockStatusPrepare:
 			w.WriteHeader(200)
 			w.Write([]byte(fmt.Sprintf("preparing EOS monitor %v", time.Now())))
-		case StatusOK:
+		case BlockStatusOK:
 			w.WriteHeader(200)
 			w.Write(
 				[]byte(
@@ -29,7 +29,7 @@ func Listen() {
 					),
 				),
 			)
-		case StatusDown:
+		case BlockStatusDown:
 			w.WriteHeader(502)
 			w.Write([]byte(bs.Status))
 		}
