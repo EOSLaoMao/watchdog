@@ -12,7 +12,7 @@ import (
 )
 
 var monitorList = map[string]string{
-	"EOS": eos.ListenPath,
+	"EOS": eos.ListenBlockPath,
 }
 
 func StartMonitor() {
