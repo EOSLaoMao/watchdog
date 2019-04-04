@@ -12,11 +12,12 @@ import (
 )
 
 var monitorList = map[string]string{
-	"EOS": eos.ListenBlockPath,
+	"EOS":         eos.ListenBlockPath,
+	"EOS Ranking": eos.ListenRankingPath,
 }
 
 func StartMonitor() {
-	ticker := time.NewTicker(3 * time.Minute)
+	ticker := time.NewTicker(3 * time.Second)
 	for range ticker.C {
 
 		for k, v := range monitorList {
@@ -32,6 +33,9 @@ func StartMonitor() {
 
 			body, _ := ioutil.ReadAll(res.Body)
 			msg := fmt.Sprintf("%s: %s", k, string(body))
+
+			// fmt.Println(msg)
+			// continue
 
 			switch res.StatusCode {
 			case 200:
