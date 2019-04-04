@@ -16,7 +16,7 @@ var monitorList = map[string]string{
 }
 
 func StartMonitor() {
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(3 * time.Minute)
 	for range ticker.C {
 
 		for k, v := range monitorList {
@@ -32,9 +32,6 @@ func StartMonitor() {
 
 			body, _ := ioutil.ReadAll(res.Body)
 			msg := fmt.Sprintf("%s: %s", k, string(body))
-
-			fmt.Println(msg)
-			continue
 
 			switch res.StatusCode {
 			case 200:
