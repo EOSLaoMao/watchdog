@@ -17,14 +17,20 @@ const (
 	BlockStatusDown    BlockStatus = "Service maybe unavailable"
 )
 
-const blocksURL string = "https://api.eoslaomao.com/v1/chain/get_table_rows"
+const blocksURL string = "https://api.eoslaomao.com/v1/chain/get_producers"
 
 type BlockStat struct {
-	UnpaidBlocks uint
+	UnpaidBlocks int
+	Ranking      int
 	Status       BlockStatus
 }
 
-var c = make(chan uint)
+type info struct {
+	UnpaidBlocks int
+	Ranking      int
+}
+
+var c = make(chan info)
 var bs = &BlockStat{
 	Status: BlockStatusPrepare,
 }
@@ -34,24 +40,24 @@ func CheckUnpaidBlocks() {
 		// 12*0.5*21
 		ticker := time.NewTicker(BlockProduceTime * bpCount * time.Second)
 		for range ticker.C {
-			blocks, err := getUnpaidBlocks(bpName)
+			i, err := getUnpaidBlocks(bpName)
 			if err != nil {
 				fmt.Println("get unpaid blocks error: ", err.Error())
 				bs.Status = BlockStatusDown
 				continue
 			}
 
-			c <- blocks
+			c <- *i
 		}
 	}()
 
 	for {
 		select {
-		case blocks := <-c:
+		case i := <-c:
 			switch {
-			case blocks-bs.UnpaidBlocks >= 12:
+			case i.UnpaidBlocks-bs.UnpaidBlocks >= 12:
 				fallthrough
-			case blocks-bs.UnpaidBlocks < 0:
+			case i.UnpaidBlocks-bs.UnpaidBlocks < 0:
 				bs.Status = BlockStatusOK
 				break
 			default:
@@ -59,12 +65,13 @@ func CheckUnpaidBlocks() {
 				break
 			}
 
-			bs.UnpaidBlocks = blocks
+			bs.UnpaidBlocks = i.UnpaidBlocks
+			bs.Ranking = i.Ranking
 		}
 	}
 }
 
-func getUnpaidBlocks(owner string) (uint, error) {
+func getUnpaidBlocks(owner string) (*info, error) {
 	cli := http.Client{
 		Timeout: time.Duration(5 * time.Second),
 	}
@@ -85,31 +92,34 @@ func getUnpaidBlocks(owner string) (uint, error) {
 
 	res, err := cli.Do(req)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, _ := ioutil.ReadAll(res.Body)
 
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return 0, fmt.Errorf(string(body))
+		return nil, fmt.Errorf(string(body))
 	}
 
 	type tableRows struct {
 		Rows []struct {
 			Owner        string `json:"owner"`
-			UnpaidBlocks uint   `json:"unpaid_blocks"`
+			UnpaidBlocks int    `json:"unpaid_blocks"`
 		} `json:"rows"`
 	}
 
 	var rows tableRows
 	_ = json.Unmarshal(body, &rows)
 
-	for _, r := range rows.Rows {
+	for i, r := range rows.Rows {
 		if r.Owner == owner {
-			return r.UnpaidBlocks, nil
+			return &info{
+				UnpaidBlocks: r.UnpaidBlocks,
+				Ranking:      i + 1,
+			}, nil
 		}
 	}
 
-	return 0, fmt.Errorf("bp with name %s NOT FOUND", owner)
+	return nil, fmt.Errorf("bp with name %s NOT FOUND", owner)
 }
