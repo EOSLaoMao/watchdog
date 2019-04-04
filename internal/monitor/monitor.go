@@ -12,8 +12,7 @@ import (
 )
 
 var monitorList = map[string]string{
-	"EOS":         eos.ListenBlockPath,
-	"EOS Ranking": eos.ListenRankingPath,
+	"EOS": eos.ListenBlockPath,
 }
 
 func StartMonitor() {
@@ -34,8 +33,8 @@ func StartMonitor() {
 			body, _ := ioutil.ReadAll(res.Body)
 			msg := fmt.Sprintf("%s: %s", k, string(body))
 
-			// fmt.Println(msg)
-			// continue
+			fmt.Println(msg)
+			continue
 
 			switch res.StatusCode {
 			case 200:

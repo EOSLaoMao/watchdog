@@ -3,7 +3,7 @@ FROM golang:1.12
 ADD ./app /watchdog/app
 ADD ./internal /watchdog/internal
 ADD ./go.mod /watchdog/go.mod
-# ADD ./go.sum /authorization/go.sum
+ADD ./go.sum /watchdog/go.sum
 
 WORKDIR /watchdog
 

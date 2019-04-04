@@ -1,53 +1,35 @@
 package eos
 
 import (
-	"fmt"
-	"net/http"
 	"time"
+
+	"github.com/EOSLaoMao/watchdog/internal/engine"
+	"github.com/gin-gonic/gin"
 )
 
 const (
-	BlockProduceTime  = 12 * 0.5
-	ListenBlockPath   = "/eos/block/status"
-	ListenRankingPath = "/eos/bpranking"
-	bpCount           = 21
-	bpName            = "eoslaomaocom"
+	BlockProduceTime = 12 * 0.5
+	ListenBlockPath  = "/eos/block/status"
+	bpCount          = 21
+	bpName           = "eoslaomaocom"
 )
 
 func Listen() {
-	http.HandleFunc(ListenBlockPath, func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("....")
+	engine.E().GET(ListenBlockPath, func(c *gin.Context) {
 		switch bs.Status {
 		case BlockStatusPrepare:
-			w.WriteHeader(204)
-			w.Write([]byte(fmt.Sprintf("preparing EOS monitor %v", time.Now())))
+			c.String(200, "preparing EOS monitor, %v", time.Now().Format(time.RFC1123))
 		case BlockStatusOK:
-			w.WriteHeader(200)
-			w.Write(
-				[]byte(
-					fmt.Sprintf(
-						"%s in good condition :), current unpaid blocks is %d, %v",
-						bpName, bs.UnpaidBlocks, time.Now(),
-					),
-				),
+			c.String(
+				200,
+				"%s in good condition :), current unpaid blocks is %d, current ranking: %d, %v",
+				bpName,
+				bs.UnpaidBlocks,
+				bs.Ranking,
+				time.Now().Format(time.RFC1123),
 			)
 		case BlockStatusDown:
-			w.WriteHeader(502)
-			w.Write([]byte(bs.Status))
-		}
-	})
-	http.HandleFunc(ListenRankingPath, func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("xxxx")
-		switch {
-		case ranking == 0:
-			w.WriteHeader(204)
-			w.Write([]byte(fmt.Sprintf("getting %s ranking %v", bpName, time.Now())))
-		case ranking > 3:
-			w.WriteHeader(502)
-			w.Write([]byte(fmt.Sprintf("the %s ranking is seriously declining to %d", bpName, ranking)))
-		default:
-			w.WriteHeader(200)
-			w.Write([]byte(fmt.Sprintf("current %s ranking is %d", bpName, ranking)))
+			c.String(502, "%s, %v", string(bs.Status), time.Now().Format(time.RFC1123))
 		}
 	})
 }
