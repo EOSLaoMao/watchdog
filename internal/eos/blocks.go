@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type BlockStatus string
@@ -42,7 +44,7 @@ func CheckUnpaidBlocks() {
 		for range ticker.C {
 			i, err := getUnpaidBlocks(bpName)
 			if err != nil {
-				fmt.Println("get unpaid blocks error: ", err.Error())
+				logrus.Errorln("EOS: get unpaid blocks error: ", err.Error())
 				bs.Status = BlockStatusDown
 				continue
 			}
