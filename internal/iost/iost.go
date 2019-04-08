@@ -1,13 +1,13 @@
 package iost
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/EOSLaoMao/watchdog/internal/engine"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -34,7 +34,7 @@ func Listen() {
 func getNodeInfo() string {
 	res, err := http.Get(nodeInfoURL)
 	if err != nil {
-		fmt.Println("IOST Node Info Failure : ", err)
+		logrus.Errorln("IOST Node Info Failure : ", err)
 		if err, ok := err.(net.Error); ok && err.Timeout() {
 			return StatusTimeout
 		}

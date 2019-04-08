@@ -9,6 +9,7 @@ import (
 
 	"github.com/EOSLaoMao/watchdog/internal/engine"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var mixinPaths = map[string]string{
@@ -51,7 +52,7 @@ func getMixinInfo(url string) string {
 	req.Header.Add("Content-Type", "application/json; charset=utf-8")
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Failure : ", err)
+		logrus.Errorln("Mixin Failure : ", err)
 		if err, ok := err.(net.Error); ok && err.Timeout() {
 			return StatusTimeout
 		}
