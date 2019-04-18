@@ -32,7 +32,12 @@ func Listen() {
 }
 
 func getNodeInfo() string {
-	res, err := http.Get(nodeInfoURL)
+	cli := http.Client{
+		Timeout: time.Duration(1 * time.Second),
+	}
+	req, _ := http.NewRequest("GET", nodeInfoURL, nil)
+
+	res, err := cli.Do(req)
 	if err != nil {
 		logrus.Errorln("IOST Node Info Failure : ", err)
 		if err, ok := err.(net.Error); ok && err.Timeout() {

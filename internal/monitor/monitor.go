@@ -15,7 +15,6 @@ var monitorList = map[string]string{
 	"EOS":          eos.ListenBlockPath,
 	"Mixin node 0": "/mixin/node0/status",
 	"Mixin node 1": "/mixin/node1/status",
-	"IOST":         "/iost/status",
 }
 
 func StartMonitor() {
