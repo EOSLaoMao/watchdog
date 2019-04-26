@@ -1,6 +1,7 @@
-package iost
+package iotex
 
 import (
+	"io/ioutil"
 	"net"
 	"net/http"
 	"time"
@@ -16,17 +17,17 @@ const (
 	StatusFailure string = "Failure"
 )
 
-const nodeInfoURL = "http://iost.eoslaomao.com:30001/getNodeInfo"
+const nodeInfoURL = "http://iotex-http.eoslaomao.com/health"
 
 func Listen() {
-	engine.E().GET("/iost/status", func(c *gin.Context) {
+	engine.E().GET("/iotex/status", func(c *gin.Context) {
 		switch getNodeInfo() {
 		case StatusOK:
-			c.String(200, "IOST in good condition :), <i>%v</i>", time.Now().Format(time.RFC1123))
+			c.String(200, "IoTex in good condition :), <i>%v</i>", time.Now().Format(time.RFC1123))
 		case StatusTimeout:
-			c.String(502, "request IOST node timeout, <i>%v</i>", time.Now().Format(time.RFC1123))
+			c.String(502, "request IoTex node timeout, <i>%v</i>", time.Now().Format(time.RFC1123))
 		case StatusFailure:
-			c.String(502, "<b>IOST node maybe unavailable</b>, <i>%v</i>", time.Now().Format(time.RFC1123))
+			c.String(502, "<b>IoTex node maybe unavailable</b>, <i>%v</i>", time.Now().Format(time.RFC1123))
 		}
 	})
 }
@@ -39,14 +40,16 @@ func getNodeInfo() string {
 
 	res, err := cli.Do(req)
 	if err != nil {
-		logrus.Errorln("IOST Node Info Failure : ", err)
+		logrus.Errorln("IoTex Node Info Failure : ", err)
 		if err, ok := err.(net.Error); ok && err.Timeout() {
 			return StatusTimeout
 		}
 		return StatusFailure
 	}
+	defer res.Body.Close()
 
-	if res.StatusCode != 200 {
+	body, _ := ioutil.ReadAll(res.Body)
+	if string(body) != "OK" {
 		return StatusFailure
 	}
 
