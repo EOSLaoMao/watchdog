@@ -47,7 +47,7 @@ func getMixinInfo(url string) string {
 	body := bytes.NewBuffer(json)
 
 	client := &http.Client{
-		Timeout: time.Duration(1 * time.Second),
+		Timeout: time.Duration(5 * time.Second),
 	}
 	req, _ := http.NewRequest("POST", url, body)
 

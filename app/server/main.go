@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/EOSLaoMao/watchdog/internal/engine"
 	"github.com/EOSLaoMao/watchdog/internal/eos"
+	"github.com/EOSLaoMao/watchdog/internal/iotex"
 	"github.com/EOSLaoMao/watchdog/internal/mixin"
-	"github.com/EOSLaoMao/watchdog/internal/iost"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 
 	go mixin.Listen()
 
-	go iost.Listen()
+	go iotex.Listen()
 
 	r := engine.E()
 	r.Run()
