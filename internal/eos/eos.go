@@ -22,14 +22,15 @@ func Listen() {
 		case BlockStatusOK:
 			c.String(
 				200,
-				"%s in good condition :), current unpaid blocks is <b>%d</b>, current ranking: <b>%d</b>, <i>%v</i>",
+				"%s in good condition :), current unpaid blocks is <b>%d</b>, current ranking: <b>%d</b>",
 				bpName,
 				bs.UnpaidBlocks,
 				bs.Ranking,
-				time.Now().Format(time.RFC1123),
 			)
+		case BlockStatusTimeout:
+			c.String(502, "request EOS node timeout", string(bs.Status))
 		case BlockStatusDown:
-			c.String(502, "<b>%s</b>, <i>%v</i>", string(bs.Status), time.Now().Format(time.RFC1123))
+			c.String(502, "<b>%s</b>", string(bs.Status))
 		}
 	})
 }
