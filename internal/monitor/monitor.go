@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -45,7 +46,7 @@ func StartMonitor() {
 
 			msg := &monitorMsg{
 				Code: res.StatusCode,
-				Msg:  fmt.Sprintf("<i>%s</i>: %s", k, string(body)),
+				Msg:  fmt.Sprintf("<b>%s</b>: %s", k, string(body)),
 			}
 
 			msgs = append(msgs, msg)
@@ -56,7 +57,7 @@ func StartMonitor() {
 			result = append(result, m.Msg)
 		}
 
-		m := fmt.Sprintf("%s\n <i>%v</i>", strings.Join(result, "\n"), time.Now().Format(time.RFC1123))
-		message.SendToTelegram(m)
+		m := fmt.Sprintf("%s\n\n<i>%v</i>", strings.Join(result, "\n\n"), time.Now().Format(time.RFC1123))
+		message.SendToTelegram(url.QueryEscape(m))
 	}
 }

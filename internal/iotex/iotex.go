@@ -23,7 +23,7 @@ func Listen() {
 	engine.E().GET("/iotex/status", func(c *gin.Context) {
 		switch getNodeInfo() {
 		case StatusOK:
-			c.String(200, "IoTex in good condition :)>")
+			c.String(200, "OK")
 		case StatusTimeout:
 			c.String(502, "request IoTex node timeout")
 		case StatusFailure:

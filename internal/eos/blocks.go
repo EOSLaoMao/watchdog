@@ -81,7 +81,7 @@ func CheckUnpaidBlocks() {
 
 func getUnpaidBlocks(owner string) (*info, error) {
 	cli := http.Client{
-		Timeout: time.Duration(2 * time.Second),
+		Timeout: time.Duration(5 * time.Second),
 	}
 
 	params := map[string]interface{}{

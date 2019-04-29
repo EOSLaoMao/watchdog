@@ -1,8 +1,6 @@
 package eos
 
 import (
-	"time"
-
 	"github.com/EOSLaoMao/watchdog/internal/engine"
 	"github.com/gin-gonic/gin"
 )
@@ -18,17 +16,16 @@ func Listen() {
 	engine.E().GET(ListenBlockPath, func(c *gin.Context) {
 		switch bs.Status {
 		case BlockStatusPrepare:
-			c.String(200, "preparing EOS monitor, <i>%v</i>", time.Now().Format(time.RFC1123))
+			c.String(200, "preparing EOS monitor")
 		case BlockStatusOK:
 			c.String(
 				200,
-				"%s in good condition :), current unpaid blocks is <b>%d</b>, current ranking: <b>%d</b>",
-				bpName,
+				"OK, unpaid blocks is <b>%d</b>, ranking: <b>%d</b>",
 				bs.UnpaidBlocks,
 				bs.Ranking,
 			)
 		case BlockStatusTimeout:
-			c.String(502, "request EOS node timeout", string(bs.Status))
+			c.String(502, "request timeout", string(bs.Status))
 		case BlockStatusDown:
 			c.String(502, "<b>%s</b>", string(bs.Status))
 		}
