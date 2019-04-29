@@ -33,11 +33,11 @@ func serve(name string, url string) {
 	engine.E().GET(fmt.Sprintf("/mixin/%s/status", name), func(c *gin.Context) {
 		switch getMixinInfo(url) {
 		case StatusOK:
-			c.String(200, "<b>%s</b> in good condition :), <i>%v</i>", name, time.Now().Format(time.RFC1123))
+			c.String(200, "<b>%s</b> in good condition :)", name)
 		case StatusTimeout:
-			c.String(502, "request timeout for <b>%s</b>, <i>%v</i>", name, time.Now().Format(time.RFC1123))
+			c.String(502, "request timeout for <b>%s</b>", name)
 		case StatusFailure:
-			c.String(502, "<b>%s maybe unavailable</b>, <i>%v</i>", name, time.Now().Format(time.RFC1123))
+			c.String(502, "<b>%s maybe unavailable</b>", name)
 		}
 	})
 }

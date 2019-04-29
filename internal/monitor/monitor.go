@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/EOSLaoMao/watchdog/internal/eos"
@@ -18,9 +19,16 @@ var monitorList = map[string]string{
 	"IoTex":        "/iotex/status",
 }
 
+type monitorMsg struct {
+	Code int
+	Msg  string
+}
+
 func StartMonitor() {
 	ticker := time.NewTicker(3 * time.Minute)
 	for range ticker.C {
+
+		var msgs []*monitorMsg
 
 		for k, v := range monitorList {
 			host := os.Getenv("MONITOR_SERVER")
@@ -34,14 +42,21 @@ func StartMonitor() {
 			defer res.Body.Close()
 
 			body, _ := ioutil.ReadAll(res.Body)
-			msg := fmt.Sprintf("%s: %s", k, string(body))
 
-			switch res.StatusCode {
-			case 200:
-				message.SendToTelegram(msg)
-			case 502:
-				message.SendToTelegram(msg)
+			msg := &monitorMsg{
+				Code: res.StatusCode,
+				Msg:  fmt.Sprintf("<i>%s</i>: %s", k, string(body)),
 			}
+
+			msgs = append(msgs, msg)
 		}
+
+		var result []string
+		for _, m := range msgs {
+			result = append(result, m.Msg)
+		}
+
+		m := fmt.Sprintf("%s\n <i>%v</i>", strings.Join(result, "\n"), time.Now().Format(time.RFC1123))
+		message.SendToTelegram(m)
 	}
 }

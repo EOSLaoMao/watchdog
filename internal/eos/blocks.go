@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"time"
 
@@ -16,6 +17,7 @@ type BlockStatus string
 const (
 	BlockStatusPrepare BlockStatus = "Prepare"
 	BlockStatusOK      BlockStatus = "OK"
+	BlockStatusTimeout BlockStatus = "Request Timeout"
 	BlockStatusDown    BlockStatus = "Service maybe unavailable"
 )
 
@@ -44,8 +46,12 @@ func CheckUnpaidBlocks() {
 		for range ticker.C {
 			i, err := getUnpaidBlocks(bpName)
 			if err != nil {
-				logrus.Errorln("EOS: get unpaid blocks error: ", err.Error())
-				bs.Status = BlockStatusDown
+				if err, ok := err.(net.Error); ok && err.Timeout() {
+					bs.Status = BlockStatusTimeout
+				} else {
+					logrus.Errorln("EOS: get unpaid blocks error: ", err.Error())
+					bs.Status = BlockStatusDown
+				}
 				continue
 			}
 
@@ -75,7 +81,7 @@ func CheckUnpaidBlocks() {
 
 func getUnpaidBlocks(owner string) (*info, error) {
 	cli := http.Client{
-		Timeout: time.Duration(1 * time.Second),
+		Timeout: time.Duration(2 * time.Second),
 	}
 
 	params := map[string]interface{}{
