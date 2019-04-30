@@ -35,7 +35,7 @@ func serve(name string, url string) {
 		case StatusOK:
 			c.String(200, "OK")
 		case StatusTimeout:
-			c.String(502, "request timeout for <b>%s</b>", name)
+			c.String(504, "request timeout for <b>%s</b>", name)
 		case StatusFailure:
 			c.String(502, "<b>%s maybe unavailable</b>", name)
 		}

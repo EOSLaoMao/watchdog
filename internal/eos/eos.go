@@ -25,7 +25,7 @@ func Listen() {
 				bs.Ranking,
 			)
 		case BlockStatusTimeout:
-			c.String(502, "request timeout", string(bs.Status))
+			c.String(504, "request timeout", string(bs.Status))
 		case BlockStatusDown:
 			c.String(502, "<b>%s</b>", string(bs.Status))
 		}

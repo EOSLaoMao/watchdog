@@ -25,7 +25,7 @@ func Listen() {
 		case StatusOK:
 			c.String(200, "OK")
 		case StatusTimeout:
-			c.String(502, "request IoTex node timeout")
+			c.String(504, "request IoTex node timeout")
 		case StatusFailure:
 			c.String(502, "<b>IoTex node maybe unavailable</b>")
 		}

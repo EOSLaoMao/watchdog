@@ -20,9 +20,12 @@ var monitorList = map[string]string{
 	"IoTex":        "/iotex/status",
 }
 
+var timeoutCache map[string]int
+
 type monitorMsg struct {
-	Code int
-	Msg  string
+	Symbol string
+	Code   int
+	Msg    string
 }
 
 func StartMonitor() {
@@ -45,19 +48,44 @@ func StartMonitor() {
 			body, _ := ioutil.ReadAll(res.Body)
 
 			msg := &monitorMsg{
-				Code: res.StatusCode,
-				Msg:  fmt.Sprintf("<b>%s</b>: %s", k, string(body)),
+				Symbol: k,
+				Code:   res.StatusCode,
+				Msg:    fmt.Sprintf("<b>%s</b>: %s", k, string(body)),
 			}
 
 			msgs = append(msgs, msg)
 		}
 
+		ok := true
 		var result []string
 		for _, m := range msgs {
 			result = append(result, m.Msg)
+
+			switch m.Code {
+			case 200:
+				timeoutCache[m.Symbol] = 0
+			case 504:
+				timeoutCache[m.Symbol]++
+			case 502:
+				ok = false
+			}
 		}
 
-		m := fmt.Sprintf("%s\n\n<i>%v</i>", strings.Join(result, "\n\n"), time.Now().Format(time.RFC1123))
-		message.SendToTelegram(url.QueryEscape(m))
+		for _, v := range timeoutCache {
+			if v >= 3 {
+				ok = false
+			}
+		}
+
+		if !ok {
+			message.MakeVoiceCall()
+		}
+
+		r := fmt.Sprintf(
+			"%s\n\n<i>%v</i>",
+			strings.Join(result, "\n\n"),
+			time.Now().Format(time.RFC1123),
+		)
+		message.SendToTelegram(url.QueryEscape(r))
 	}
 }
