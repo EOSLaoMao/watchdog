@@ -24,7 +24,7 @@ func Listen() {
 		case StatusOK:
 			c.String(200, "IOST in good condition :), <i>%v</i>", time.Now().Format(time.RFC1123))
 		case StatusTimeout:
-			c.String(502, "request IOST node timeout, <i>%v</i>", time.Now().Format(time.RFC1123))
+			c.String(504, "request IOST node timeout, <i>%v</i>", time.Now().Format(time.RFC1123))
 		case StatusFailure:
 			c.String(502, "<b>IOST node maybe unavailable</b>, <i>%v</i>", time.Now().Format(time.RFC1123))
 		}
