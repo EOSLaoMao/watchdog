@@ -22,7 +22,7 @@ var monitorList = map[string]string{
 	"IoTex":        "/iotex/status",
 }
 
-var timeoutCache map[string]int
+var timeoutCache = make(map[string]int)
 
 type monitorMsg struct {
 	Symbol string
