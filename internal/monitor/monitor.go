@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -57,6 +58,10 @@ func StartMonitor() {
 
 			msgs = append(msgs, msg)
 		}
+
+		sort.Slice(msgs, func(i, j int) bool {
+			return msgs[i].Symbol <= msgs[j].Symbol
+		})
 
 		ok := true
 		var result []string
