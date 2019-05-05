@@ -13,6 +13,8 @@ import (
 	"github.com/EOSLaoMao/watchdog/internal/message"
 )
 
+const alertTimes = 3
+
 var monitorList = map[string]string{
 	"EOS":          eos.ListenBlockPath,
 	"Mixin node 0": "/mixin/node0/status",
@@ -72,7 +74,7 @@ func StartMonitor() {
 		}
 
 		for _, v := range timeoutCache {
-			if v >= 3 {
+			if v >= alertTimes {
 				ok = false
 			}
 		}
