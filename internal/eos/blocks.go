@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,25 @@ var bs = &BlockStat{
 	Status: BlockStatusPrepare,
 }
 
+type blockTimes struct {
+	counter int
+	sync.RWMutex
+}
+
+var bt = &blockTimes{}
+
+func (bts *blockTimes) increase() {
+	bts.Lock()
+	defer bts.Unlock()
+	bts.counter++
+}
+
+func (bts *blockTimes) reset() {
+	bts.Lock()
+	defer bts.Unlock()
+	bts.counter = 0
+}
+
 func CheckUnpaidBlocks() {
 	go func() {
 		// 12*0.5*21
@@ -62,15 +82,17 @@ func CheckUnpaidBlocks() {
 	for {
 		select {
 		case i := <-c:
-			switch {
-			case i.UnpaidBlocks-bs.UnpaidBlocks >= 10:
-				fallthrough
-			case i.UnpaidBlocks-bs.UnpaidBlocks < 0:
+			ubc := i.UnpaidBlocks - bs.UnpaidBlocks
+			if ubc >= 10 || ubc < 0 {
 				bs.Status = BlockStatusOK
-				break
-			default:
-				bs.Status = BlockStatusDown
-				break
+				bt.reset()
+			} else {
+				bt.RLock()
+				if bt.counter >= 3 {
+					bs.Status = BlockStatusDown
+				}
+				bt.RUnlock()
+				bt.increase()
 			}
 
 			bs.UnpaidBlocks = i.UnpaidBlocks
