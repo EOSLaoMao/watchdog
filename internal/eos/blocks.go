@@ -63,7 +63,7 @@ func CheckUnpaidBlocks() {
 		select {
 		case i := <-c:
 			switch {
-			case i.UnpaidBlocks-bs.UnpaidBlocks >= 12:
+			case i.UnpaidBlocks-bs.UnpaidBlocks >= 10:
 				fallthrough
 			case i.UnpaidBlocks-bs.UnpaidBlocks < 0:
 				bs.Status = BlockStatusOK
