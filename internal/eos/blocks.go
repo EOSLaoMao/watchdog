@@ -82,6 +82,12 @@ func CheckUnpaidBlocks() {
 	for {
 		select {
 		case i := <-c:
+			if i.Ranking > 21 {
+				bs.Ranking = i.Ranking
+				bs.Status = BlockStatusOK
+				bt.reset()
+				continue
+			}
 			ubc := i.UnpaidBlocks - bs.UnpaidBlocks
 			if ubc >= 10 || ubc < 0 {
 				bs.Status = BlockStatusOK
