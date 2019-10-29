@@ -68,10 +68,10 @@ func CheckUnpaidBlocks() {
 			if err != nil {
 				if err, ok := err.(net.Error); ok && err.Timeout() {
 					bs.Status = BlockStatusTimeout
-				} else {
-					logrus.Errorln("EOS: get unpaid blocks error: ", err.Error())
-					bs.Status = BlockStatusDown
+					continue
 				}
+				logrus.Errorln("EOS: get unpaid blocks error: ", err.Error())
+				bs.Status = BlockStatusDown
 				continue
 			}
 
