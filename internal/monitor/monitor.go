@@ -74,7 +74,8 @@ func StartMonitor() {
 			case 504:
 				timeoutCache[m.Symbol]++
 			case 502:
-				ok = false
+				//ok = false
+				timeoutCache[m.Symbol]++
 			}
 		}
 
