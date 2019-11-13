@@ -20,7 +20,7 @@ const (
 const ServerInfoURL = "https://longmen.fund/api/price"
 
 func Listen() {
-	engine.E().GET("/longmen/statues", func(c *gin.Context) {
+	engine.E().GET("/longmen/status", func(c *gin.Context) {
 		switch getServerInfo() {
 		case StatusOK:
 			c.String(200, "OK")
