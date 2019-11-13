@@ -21,6 +21,7 @@ var monitorList = map[string]string{
 	"Mixin node 0": "/mixin/node0/status",
 	"Mixin node 1": "/mixin/node1/status",
 	"IoTex":        "/iotex/status",
+	"Longmen":      "/longmen/status",
 }
 
 var timeoutCache = make(map[string]int)
