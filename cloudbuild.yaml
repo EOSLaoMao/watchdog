@@ -1,8 +1,8 @@
 steps:
 - id: 'build image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/laomaojp/github.com/eoslaomao/watchdog:$SHORT_SHA', '.']
+  args: ['build', '-t', 'gcr.io/laomaojp/github.com/eoslaomao/watchdog:$TAG_NAME', '.']
 
 - id: 'push image'
   name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/laomaojp/github.com/eoslaomao/watchdog:$SHORT_SHA']
+  args: ['push', 'gcr.io/laomaojp/github.com/eoslaomao/watchdog:$TAG_NAME']
