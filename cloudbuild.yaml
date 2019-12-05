@@ -64,7 +64,7 @@ steps:
 
 - id: 'Deploy' 
   name: 'gcr.io/$PROJECT_ID/helm'
-  args: ['upgrade','-f', '/workspace/Charts/block-producer/charts/watchdog/values.yaml', 'block-producer','/workspace/Charts/block-producer/charts/watchdog']
+  args: ['upgrade','-f', '/workspace/Charts/block-producer/charts/watchdog/values.yaml', '--val','tag','=','$TAG_NAME','block-producer','/workspace/Charts/block-producer/charts/watchdog']
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-northeast1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=laomao'
