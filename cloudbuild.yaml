@@ -7,7 +7,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/laomaojp/github.com/eoslaomao/watchdog:$TAG_NAME']
 
-- id:  'make sure kubectl can work'
+- id:  'Make sure kubectl can work'
   name: 'gcr.io/cloud-builders/kubectl'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=asia-northeast1'
