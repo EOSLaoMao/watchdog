@@ -16,12 +16,18 @@ import (
 
 const alertTimes = 3
 
-var monitorList = map[string]string{
-	"EOS":          eos.ListenBlockPath,
-	"Mixin node 0": "/mixin/node0/status",
-	"Mixin node 1": "/mixin/node1/status",
-	"IoTex":        "/iotex/status",
-	"Longmen":      "/longmen/status",
+type toMonitor struct {
+	Name    string
+	Path    string
+	Disable bool
+}
+
+var monitorList = []toMonitor{
+	toMonitor{"EOS", eos.ListenBlockPath, os.Getenv("DISABLE_EOS") == "1"},
+	toMonitor{"Mixin node 0", "/mixin/node0/status", os.Getenv("DISABLE_MIXIN0") == "1"},
+	toMonitor{"Mixin node 1", "/mixin/node1/status", os.Getenv("DISABLE_MIXIN2") == "1"},
+	toMonitor{"IoTex", "/iotex/status", os.Getenv("DISABLE_IOTEX") == "1"},
+	toMonitor{"Longmen", "/longmen/status", os.Getenv("DISABLE_LONGMEN") == "1"},
 }
 
 var timeoutCache = make(map[string]int)
@@ -38,12 +44,15 @@ func StartMonitor() {
 
 		var msgs []*monitorMsg
 
-		for k, v := range monitorList {
+		for _, v := range monitorList {
+			if v.Disable {
+				continue
+			}
 			host := os.Getenv("MONITOR_SERVER")
-			res, err := http.Get(fmt.Sprintf("http://%s:8080%s", host, v))
+			res, err := http.Get(fmt.Sprintf("http://%s:8080%s", host, v.Path))
 			if err != nil {
 				message.SendToTelegram(
-					fmt.Sprintf("Monitor for %s maybe unavailable: %s", k, err.Error()),
+					fmt.Sprintf("Monitor for %s maybe unavailable: %s", v.Name, err.Error()),
 				)
 				break
 			}
@@ -52,9 +61,9 @@ func StartMonitor() {
 			body, _ := ioutil.ReadAll(res.Body)
 
 			msg := &monitorMsg{
-				Symbol: k,
+				Symbol: v.Name,
 				Code:   res.StatusCode,
-				Msg:    fmt.Sprintf("<b>%s</b>: %s", k, string(body)),
+				Msg:    fmt.Sprintf("<b>%s</b>: %s", v.Name, string(body)),
 			}
 
 			msgs = append(msgs, msg)
