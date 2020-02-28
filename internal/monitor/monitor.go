@@ -24,8 +24,8 @@ type toMonitor struct {
 
 var monitorList = []toMonitor{
 	toMonitor{"EOS", eos.ListenBlockPath, os.Getenv("DISABLE_EOS") == "1"},
-	toMonitor{"Mixin node 0", "/mixin/node0/status", os.Getenv("DISABLE_MIXIN0") == "1"},
-	toMonitor{"Mixin node 1", "/mixin/node1/status", os.Getenv("DISABLE_MIXIN2") == "1"},
+	toMonitor{"Mixin node 0", "/mixin/node0/status", os.Getenv("DISABLE_MIXIN") == "1"},
+	toMonitor{"Mixin node 1", "/mixin/node1/status", os.Getenv("DISABLE_MIXIN") == "1"},
 	toMonitor{"IoTex", "/iotex/status", os.Getenv("DISABLE_IOTEX") == "1"},
 	toMonitor{"Longmen", "/longmen/status", os.Getenv("DISABLE_LONGMEN") == "1"},
 }
